@@ -1,40 +1,90 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# JWTって何？
 
-## Getting Started
+情報を安全に伝達するためのコンパクトで自己完結型の方法です。JWTは、データをJSON形式で表現し、署名や暗号化して安全に送受信します。以下に、初心者向けにJWTの基本的な概念を説明します：
 
-First, run the development server:
+1. JSON形式: JWTはJSON形式で情報を表現します。JSON（JavaScript Object Notation）は、キーと値のペア
+           を持つ軽量なデータ交換形式です。例えば、{"user_id": 123, "username": "john_doe"}のような形式です。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. トークンの構成: JWTは3つのセクションからなります。それぞれ、ヘッダー、ペイロード、署名です。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* ヘッダー（Header）: トークンのタイプや使用するアルゴリズムなど、トークンに関するメタデータが含まれます。
+* ペイロード（Payload）: 実際のデータが含まれます。ユーザーIDや権限など、アプリケーションが必要とする情
+                        報がここに格納されます。
+* 署名（Signature）: ヘッダーとペイロードを結合して、安全性を確保するための署名が含まれます。
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+3. 安全な通信: JWTは署名によって安全性を確保します。署名を検証することで、トークンの改ざんや偽造を防ぐ
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+4. ステートレス性: JWTはステートレスです。つまり、サーバー側でトークンを検証し、信頼できる情報を取得する 
+                ことができます。これにより、サーバーはトークンを保存する必要がなくなり、スケーラビリティが向上します。
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+5. 広範な用途: JWTはWebアプリケーションの認証や認可に広く利用されます。ログインやAPIの認証、情報の共有な
+            ど、さまざまな用途に活用することができます。
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+簡単に言えば、JWTは安全なトークンを生成し、それを使って情報を安全にやり取りするための仕組み
 
-## Learn More
+# JWTを使った認証の流れ
 
-To learn more about Next.js, take a look at the following resources:
+1. ログイン: ユーザーがアプリケーションにログインすると、ユーザー名とパスワードを送信します。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. 認証: サーバーは受け取ったユーザー名とパスワードを検証します。正しい場合、サーバーはユーザーのIDなどの
+        情報を使ってJWTを生成。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+3. JWTの生成: サーバーはユーザーのIDなどの情報をペイロードに含め、秘密鍵を使って署名を行い、JWTを生成し
+            　ます。
 
-## Deploy on Vercel
+4. JWTの返却: サーバーは生成したJWTをクライアントに返却します。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. クライアント側の保存: クライアントは受け取ったJWTをローカルストレージなどに保存します。
+    * ローカルストレージ: データを永続かするための仕組み
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+6. 認証が必要なリクエスト: クライアントが認証が必要なリクエストを行う際に、JWTをリクエストのヘッダーに含
+                        めてサーバーに送信します。
+
+7. JWTの検証: サーバーは受け取ったJWTを検証します。JWTが有効であり、署名が正しい場合、サーバーはリクエス
+            トを処理します。
+
+8. ユーザーの認証: サーバーはJWTのペイロードからユーザーIDなどの情報を取得し、ユーザーを認証します
+
+9. 応答: サーバーは認証が成功した場合、リクエストに応じたデータをクライアントに返します。
+
+この流れによって、ユーザーはログイン後に生成されたJWTを使って認証され、その後のリクエストで認証が維持されます。JWTを使った認証はステートレスであり、セッションの管理が不要なため、スケーラビリティが高く、APIなどの分散型システムでよく利用されます。
+
+
+## ペイロードって何？
+
+* ペイロードは、データ通信において実際に送信されるデータの部分を指します。HTTPリクエストやレスポンスの中で、ヘッダーやメ
+　タデータ以外の実際のデータを含む部分がペイロードです。
+
+  例えば、HTTP POSTリクエストの場合、ヘッダーにはリクエストのメタデータ（Content-TypeやContent-Lengthなど）が含まれていますが、実際に送信されるユーザーが入力したフォームデータやJSONデータなどがペイロードに含まれます。
+
+  また、JWT（JSON Web Token）においても、ペイロードはJWTに含まれるデータの部分を指します。通常、ペイロードにはユーザーのIDやロール、有効期限などの情報が含まれ、認証や認可などの目的で使用されます。
+
+## 署名って何？
+* 署名は、データの改ざんや偽装を防ぐために使用される暗号学的な手法です。データの署名には、特定のアルゴリズム（例えば、  
+    HMACやRSAなど）を使用して、データに対する固有の識別子（署名）を生成します。
+
+具体的には、データの署名は以下の手順で行われます：
+
+1. データのハッシュ化：まず、データから固定長のハッシュ値を生成します。このハッシュ値は、データの内容を一意に表すものです。
+
+2. 秘密鍵を使用した署名：ハッシュ値に対して、送信者の秘密鍵を使用して署名を生成します。この署名は、秘密鍵によってのみ生成でき、公開鍵では検証できません。
+
+3. 署名の付与：署名は、元のデータと一緒に送信されます。
+
+受信者は、受信したデータと署名を使用して、以下の手順でデータの整合性を検証します：
+
+1. データのハッシュ化：受信したデータからハッシュ値を生成します。
+
+2. 公開鍵を使用した検証：送信者の公開鍵を使用して、受信した署名の正当性を検証します。正当な署名であれば、送信者が秘密鍵を持っているときにしか生成できないため、データの改ざんがなかったことを示します。
+
+署名は、データの送信者が信頼できることを確認するために広く使用されます。特に、データの送信者が信頼できるが、データが途中で改ざんされないことを保証する必要がある場合に役立ちます。
+
+
+# JWTの流れをペイロードと署名の概念を使って説明。
+
+1. ログイン:
+* ユーザーがログイン情報（ユーザー名とパスワードなど）をサーバーに送信
+* サーバーはログイン情報を検証し、有効なユーザーであれば、そのユーザーに関する情報を含むペイロードを生成
+  (user_idを含む)
+* サーバーは、生成されたペイロードとサーバー側で事前に設定されたシークレットキーを使用して、トークンを生成しま
+  す。このトークンは、ペイロードと署名のペアで構成されています。# jwt_app
